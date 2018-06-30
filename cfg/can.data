@@ -1,0 +1,7 @@
+train  = LINEMOD/can/train.txt
+valid  = LINEMOD/can/test.txt
+backup = backup/can
+mesh = LINEMOD/can/can.ply
+tr_range = LINEMOD/can/training_range.txt
+name = can
+diam = 0.202

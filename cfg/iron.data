@@ -1,0 +1,7 @@
+train  = LINEMOD/iron/train.txt
+valid  = LINEMOD/iron/test.txt
+backup = backup/iron
+mesh = LINEMOD/iron/iron.ply
+tr_range = LINEMOD/iron/training_range.txt
+name = iron
+diam = 0.303153

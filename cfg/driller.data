@@ -1,0 +1,7 @@
+train  = LINEMOD/driller/train.txt
+valid  = LINEMOD/driller/test.txt
+backup = backup/driller
+mesh = LINEMOD/driller/driller.ply
+tr_range = LINEMOD/driller/training_range.txt
+name = driller
+diam = 0.262

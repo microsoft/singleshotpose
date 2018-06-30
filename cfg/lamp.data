@@ -1,0 +1,7 @@
+train  = LINEMOD/lamp/train.txt
+valid  = LINEMOD/lamp/test.txt
+backup = backup/lamp
+mesh = LINEMOD/lamp/lamp.ply
+tr_range = LINEMOD/lamp/training_range.txt
+name = lamp
+diam = 0.285155

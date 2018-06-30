@@ -1,0 +1,7 @@
+train  = LINEMOD/cam/train.txt
+valid  = LINEMOD/cam/test.txt
+backup = backup/cam
+mesh = LINEMOD/cam/cam.ply
+tr_range = LINEMOD/cam/training_range.txt
+name = cam
+diam = 0.173

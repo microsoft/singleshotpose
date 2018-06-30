@@ -1,0 +1,7 @@
+train  = LINEMOD/duck/train.txt
+valid  = LINEMOD/duck/test.txt
+backup = backup/duck
+mesh = LINEMOD/duck/duck.ply
+tr_range = LINEMOD/duck/training_range.txt
+name = duck
+diam = 0.109

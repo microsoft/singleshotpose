@@ -1,0 +1,5 @@
+valid  = ../LINEMOD/driller/test_occlusion.txt
+mesh = ../LINEMOD/driller/driller.ply
+backup = backup_multi
+name = driller
+diam = 0.262

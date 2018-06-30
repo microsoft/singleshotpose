@@ -1,0 +1,7 @@
+train  = LINEMOD/glue/train.txt
+valid  = LINEMOD/glue/test.txt
+backup = backup/glue
+mesh = LINEMOD/glue/glue.ply
+tr_range = LINEMOD/glue/training_range.txt
+name = glue
+diam = 0.176

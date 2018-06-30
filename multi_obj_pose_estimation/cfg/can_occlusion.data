@@ -1,0 +1,5 @@
+valid  = ../LINEMOD/can/test_occlusion.txt
+mesh = ../LINEMOD/can/can.ply
+backup = backup_multi
+name = can
+diam = 0.202

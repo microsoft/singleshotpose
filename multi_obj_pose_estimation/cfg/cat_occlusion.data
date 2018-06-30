@@ -1,0 +1,5 @@
+valid  = ../LINEMOD/cat/test_occlusion.txt
+mesh = ../LINEMOD/cat/cat.ply
+backup = backup_multi
+name = cat
+diam = 0.155
