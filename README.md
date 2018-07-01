@@ -12,7 +12,7 @@ We propose a single-shot approach for simultaneously detecting an object in an R
 
 #### Citation
 If you use this code, please cite the following
-> @article{varol17a,  
+> @article{tekin18,  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITLE = {{Real-Time Seamless Single Shot 6D Object Pose Prediction}},  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTHOR = {Tekin, Bugra and Sinha, Sudipta N. and Fua, Pascal},  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOURNAL =  {CVPR},  
