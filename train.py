@@ -85,6 +85,7 @@ def train(epoch):
         # Forward pass
         output = model(data)
         t6 = time.time()
+        model.seen = model.seen + data.data.size(0)
         region_loss.seen = region_loss.seen + data.data.size(0)
         # Compute loss, grow an array of losses for saving later on
         loss = region_loss(output, target)
