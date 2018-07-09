@@ -393,11 +393,11 @@ def augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, 
         successful = False
         while not successful:
 
-            objpath = '/cvlabdata1/home/btekin/ope/yolo6D/LINEMOD/' + obj + '/train.txt'
+            objpath = '../LINEMOD/' + obj + '/train.txt'
             with open(objpath, 'r') as objfile:
                 objlines = objfile.readlines()
             rand_index = random.randint(0, len(objlines) - 1)
-            obj_rand_img_path = objlines[rand_index].rstrip()
+            obj_rand_img_path = '../' + objlines[rand_index].rstrip()
             obj_rand_mask_path = obj_rand_img_path.replace('JPEGImages', 'mask').replace('/00', '/').replace('.jpg', '.png')
             obj_rand_lab_path = obj_rand_img_path.replace('images', 'labels').replace('JPEGImages', 'labels').replace('.jpg', '.txt').replace('.png','.txt')
 
