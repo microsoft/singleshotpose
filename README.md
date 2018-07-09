@@ -25,7 +25,7 @@ SingleShotPose is released under the MIT License (refer to the LICENSE file for 
 
 #### Environment and dependencies
 
-The code is tested on Linux with CUDA v8 and cudNN v5.1. The implementation is based on PyTorch and tested on Python2.7. The code requires the following dependencies that could be installed with conda or pip: numpy, scipy, PIL, opencv-python
+The code is tested on Linux with CUDA v8 and cudNN v5.1. The implementation is based on PyTorch 0.3.1 and tested on Python2.7. The code requires the following dependencies that could be installed with conda or pip: numpy, scipy, PIL, opencv-python
 
 #### Downloading and preparing the data
 
