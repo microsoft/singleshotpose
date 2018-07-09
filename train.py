@@ -265,7 +265,6 @@ def test(epoch, niter):
     logging('   Acc using {} px 2D Projection = {:.2f}%'.format(px_threshold, acc))
     logging('   Acc using {} vx 3D Transformation = {:.2f}%'.format(vx_threshold, acc3d))
     logging('   Acc using 5 cm 5 degree metric = {:.2f}%'.format(acc5cm5deg))
-    logging('   Acc using iou metric = {:.2f}%'.format(accious))
     logging('   Translation error: %f, angle error: %f' % (testing_error_trans/(nts+eps), testing_error_angle/(nts+eps)) )
 
     # Register losses and errors for saving later on
