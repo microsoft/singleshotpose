@@ -131,12 +131,12 @@ The coordinates are normalized by the image width and height: x / image_width an
 
 To train on your own dataset, simply create the same folder structure for your data and adjust the paths in cfg/[OBJECT].data, [DATASET]/[OBJECT]/train.txt and [DATASET]/[OBJECT]/test.txt files. The folder for each object should contain the following: 
 
-(1) a folder containing image files, 
-(2) a folder containing label files for each image (labels should be created using the same output representation explained above),
-(3) optionally, a folder containing segmentation masks for each image (if you want to change the background of your training images to be more robust to diverse backgrounds), 
-(4) a text file containing the training images (train.txt),
-(5) a text file contraining the test images (test.txt),
-(6) a .ply file containing the 3D object model
+(1) a folder containing image files,  
+(2) a folder containing label files for each image (labels should be created using the same output representation explained above),  
+(3) optionally, a folder containing segmentation masks for each image (if you want to change the background of your training images to be more robust to diverse backgrounds),  
+(4) a text file containing the training images (train.txt),  
+(5) a text file contraining the test images (test.txt),  
+(6) a .ply file containing the 3D object model  
 
 #### Acknowledgments
 
