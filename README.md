@@ -12,10 +12,10 @@ We propose a single-shot approach for simultaneously detecting an object in an R
 
 #### Citation
 If you use this code, please cite the following
-> @article{tekin18,  
+> @inproceedings{tekin18,  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITLE = {{Real-Time Seamless Single Shot 6D Object Pose Prediction}},  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AUTHOR = {Tekin, Bugra and Sinha, Sudipta N. and Fua, Pascal},  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOURNAL =  {CVPR},  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BOOKTITLE =  {CVPR},  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YEAR = {2018}  
 }
 
@@ -59,7 +59,7 @@ python train.py cfg/ape.data cfg/yolo-pose.cfg backup/ape/init.weights
 
 [cfgfile] contains information about the network structure
 
-[initweightfile] contains initialization weights. The weights "backup/[OBJECT_NAME]/init.weights" are pretrained on LINEMOD for faster convergence. We found it effective to pretrain the model without confidence estimation first and fine-tune the network later on with confidence estimation as well. "init.weights" contain the weights of these pretrained networks. However, you can also still train the network from a more crude initialization (with weights trained on ImageNet). This usually results in a slower and sometime slightly worse convergence. You can find in cfg/ folder, the file <<darknet19_448.conv.23>>, includes the network weights pretrained on ImageNet. Alternatively, you can pretrain your own weights by setting the regularization parameter for the confidence loss to 0 as explained in "Pretraining the model" section.
+[initweightfile] contains initialization weights. The weights "backup/[OBJECT_NAME]/init.weights" are pretrained on LINEMOD for faster convergence. We found it effective to pretrain the model without confidence estimation first and fine-tune the network later on with confidence estimation as well. "init.weights" contain the weights of these pretrained networks. However, you can also still train the network from a more crude initialization (with weights trained on ImageNet). This usually results in a slower and sometimes slightly worse convergence. You can find in cfg/ folder the file <<darknet19_448.conv.23>> that includes the network weights pretrained on ImageNet. Alternatively, you can pretrain your own weights by setting the regularization parameter for the confidence loss to 0 as explained in "Pretraining the model" section.
 
 At the start of the training you will see an output like this:
 
@@ -119,13 +119,24 @@ e.g.,
 python train_multi.py cfg/occlusion.data cfg/yolo-pose-multi.cfg backup_multi/init.weights
 ```
 
-#### Output Representation
+#### Output representation
 
 Our output target representation consist of 21 values. We predict 9 points corresponding to the centroid and corners of the 3D object model. Additionally we predict the class in each cell. That makes 9x2+1 = 19 points. In multi-object training, during training, we assign whichever anchor box has the most similar size to the current object as the responsible one to predict the 2D coordinates for that object. To encode the size of the objects, we have additional 2 numbers for the range in x dimension and y dimension. Therefore, we have 9x2+1+2 = 21 numbers
  
 Respectively, 21 numbers correspond to the following: 1st number: class label, 2nd number: x0 (x-coordinate of the centroid), 3rd number: y0 (y-coordinate of the centroid), 4th number: x1 (x-coordinate of the first corner), 5th number: y1 (y-coordinate of the first corner), ..., 18th number: x8 (x-coordinate of the eighth corner), 19th number: y8 (y-coordinate of the eighth corner), 20th number: x range, 21st number: y range.
  
-The coordinates are normalized by the image width and height: x / image_width åand y / image_height. This is useful to have similar output ranges for the coordinate regression and object classification tasks.
+The coordinates are normalized by the image width and height: x / image_width and y / image_height. This is useful to have similar output ranges for the coordinate regression and object classification tasks.
+
+#### Training on your own dataset
+
+To train on your own dataset, simply create the same folder structure for your data and adjust the paths in cfg/[OBJECT].data, [DATASET]/[OBJECT]/train.txt and [DATASET]/[OBJECT]/test.txt files. The folder for each object should contain the following: 
+
+(1) a folder containing image files, 
+(2) a folder containing label files for each image (labels should be created using the same output representation explained above),
+(3) optionally, a folder containing segmentation masks for each image (if you want to change the background of your training images to be more robust to diverse backgrounds), 
+(4) a text file containing the training images (train.txt),
+(5) a text file contraining the test images (test.txt),
+(6) a .ply file containing the 3D object model
 
 #### Acknowledgments
 

@@ -81,7 +81,7 @@ def valid(datacfg, cfgfile, weightfile, conf_th):
         # Pass data to GPU
         if use_cuda:
             data = data.cuda()
-            target = target.cuda()
+            # target = target.cuda()
         
         # Wrap tensors in Variable class, set volatile=True for inference mode and to use minimal memory during inference
         data = Variable(data, volatile=True)
