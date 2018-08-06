@@ -884,7 +884,7 @@ def plot_boxes(img, boxes, savename=None, class_names=None):
 def read_truths(lab_path):
     if os.path.getsize(lab_path):
         truths = np.loadtxt(lab_path)
-        truths = truths.reshape(truths.size/21, 21) # to avoid single truth problem
+        truths = truths.reshape(truths.size//21, 21) # to avoid single truth problem
         return truths
     else:
         return np.array([])
@@ -1008,7 +1008,7 @@ def file_lines(thefilepath):
         buffer = thefile.read(8192*1024)
         if not buffer:
             break
-        count += buffer.count('\n')
+        count += buffer.count(b'\n')
     thefile.close( )
     return count
 
