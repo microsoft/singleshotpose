@@ -343,7 +343,7 @@ if __name__ == "__main__":
     init_height       = model.height
     test_width        = 672
     test_height       = 672
-    init_epoch        = model.seen/nsamples 
+    init_epoch        = model.seen//nsamples
 
     # Variable to save
     training_iters          = []
