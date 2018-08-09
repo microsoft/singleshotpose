@@ -227,7 +227,10 @@ class Darknet(nn.Module):
             elif block['type'] == 'region':
                 loss = RegionLoss()
                 anchors = block['anchors'].split(',')
-                loss.anchors = [float(i) for i in anchors]
+                if anchors == ['']:
+                    loss.anchors = []
+                else:
+                    loss.anchors = [float(i) for i in anchors]
                 loss.num_classes = int(block['classes'])
                 loss.num_anchors = int(block['num'])
                 loss.anchor_step = len(loss.anchors)/loss.num_anchors
