@@ -92,7 +92,7 @@ python valid.py cfg/ape.data cfg/yolo-pose.cfg backup/ape/model_backup.weights
 
 Models are already pretrained but if you would like to pretrain the network from scratch and get the initialization weights yourself, you can run the following:
 
-python train.py cfg/ape.data cfg/yolo-pose-pre.cfg cfg/darknet19_448.conv.23
+python train.py cfg/ape.data cfg/yolo-pose-pre.cfg cfg/darknet19_448.conv.23  
 cp backup/ape/model.weights backup/ape/init.weights
 
 During pretraining the regularization parameter for the confidence term is set to "0" in the config file "cfg/yolo-pose-pre.cfg". "darknet19_448.conv.23" includes the weights of YOLOv2 trained on ImageNet. 
