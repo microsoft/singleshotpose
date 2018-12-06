@@ -25,7 +25,7 @@ SingleShotPose is released under the MIT License (refer to the LICENSE file for 
 
 #### Environment and dependencies
 
-The code is tested on Linux with CUDA v8 and cudNN v5.1. The implementation is based on PyTorch 0.3.1 and tested on Python2.7. The code requires the following dependencies that could be installed with conda or pip: numpy, scipy, PIL, opencv-python
+The code is tested on Linux with CUDA v8 and cudNN v5.1. The implementation is based on PyTorch 0.3.1 and tested on Python2.7. The code requires the following dependencies that could be installed with conda or pip: numpy, scipy, PIL, opencv-python. For a version that is Python 3 and Pytorch 0.4 compatible, you could see [this link](https://github.com/btekin/singleshot6Dpose).
 
 #### Downloading and preparing the data
 
@@ -82,7 +82,9 @@ To test the model run
 
 ```
 python valid.py datafile cfgfile weightfile
-e.g.,
+```
+e.g.
+```
 python valid.py cfg/ape.data cfg/yolo-pose.cfg backup/ape/model_backup.weights
 ```
 
@@ -105,7 +107,9 @@ Testing:
 
 ```
 python valid_multi.py cfgfile weightfile
-e.g.,
+```
+e.g.
+```
 python valid_multi.py cfg/yolo-pose-multi.cfg backup_multi/model_backup.weights
 ```
 
@@ -132,11 +136,13 @@ The coordinates are normalized by the image width and height: x / image_width an
 To train on your own dataset, simply create the same folder structure with the provided LINEMOD dataset and adjust the paths in cfg/[OBJECT].data, [DATASET]/[OBJECT]/train.txt and [DATASET]/[OBJECT]/test.txt files. The folder for each object should contain the following: 
 
 (1) a folder containing image files,  
-(2) a folder containing label files  (labels should be created using the same output representation explained above),  
-(3) a text file containing the training images (train.txt),  
-(4) a text file contraining the test images (test.txt),  
+(2) a folder containing label files  (please refer to [this link](https://github.com/Microsoft/singleshotpose/blob/master/label_file_creation.md) for a detailed explanation on how to create labels),  
+(3) a text file containing the filenames for training images (train.txt),  
+(4) a text file containing the filenames for test images (test.txt),  
 (5) a .ply file containing the 3D object model  
 (6) optionally, a folder containing segmentation masks (if you want to change the background of your training images to be more robust to diverse backgrounds),  
+
+
 
 #### Acknowledgments
 
