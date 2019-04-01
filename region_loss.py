@@ -63,7 +63,7 @@ def build_targets(pred_corners, target, anchors, num_anchors, num_classes, nH, n
             gy8 = target[b][t*21+18]*nH
 
             cur_gt_corners = torch.FloatTensor([gx0/nW,gy0/nH,gx1/nW,gy1/nH,gx2/nW,gy2/nH,gx3/nW,gy3/nH,gx4/nW,gy4/nH,gx5/nW,gy5/nH,gx6/nW,gy6/nH,gx7/nW,gy7/nH,gx8/nW,gy8/nH]).repeat(nAnchors,1).t() # 16 x nAnchors
-            cur_confs  = torch.max(cur_confs, corner_confidences9(cur_pred_corners, cur_gt_corners)) # some irrelevant areas are filtered, in the same grid multiple anchor boxes might exceed the threshold
+            cur_confs  = torch.max(cur_confs, corner_confidences9(cur_pred_corners, cur_gt_corners)).view_as(conf_mask[b]) # some irrelevant areas are filtered, in the same grid multiple anchor boxes might exceed the threshold
         conf_mask[b][cur_confs>sil_thresh] = 0
     if seen < -1:#6400:
        tx0.fill_(0.5)
@@ -202,24 +202,24 @@ class RegionLoss(nn.Module):
         pred_corners = torch.cuda.FloatTensor(18, nB*nA*nH*nW)
         grid_x = torch.linspace(0, nW-1, nW).repeat(nH,1).repeat(nB*nA, 1, 1).view(nB*nA*nH*nW).cuda()
         grid_y = torch.linspace(0, nH-1, nH).repeat(nW,1).t().repeat(nB*nA, 1, 1).view(nB*nA*nH*nW).cuda()
-        pred_corners[0]  = (x0.data + grid_x) / nW
-        pred_corners[1]  = (y0.data + grid_y) / nH
-        pred_corners[2]  = (x1.data + grid_x) / nW
-        pred_corners[3]  = (y1.data + grid_y) / nH
-        pred_corners[4]  = (x2.data + grid_x) / nW
-        pred_corners[5]  = (y2.data + grid_y) / nH
-        pred_corners[6]  = (x3.data + grid_x) / nW
-        pred_corners[7]  = (y3.data + grid_y) / nH
-        pred_corners[8]  = (x4.data + grid_x) / nW
-        pred_corners[9]  = (y4.data + grid_y) / nH
-        pred_corners[10]  = (x5.data + grid_x) / nW
-        pred_corners[11]  = (y5.data + grid_y) / nH
-        pred_corners[12] = (x6.data + grid_x) / nW
-        pred_corners[13] = (y6.data + grid_y) / nH
-        pred_corners[14] = (x7.data + grid_x) / nW
-        pred_corners[15] = (y7.data + grid_y) / nH
-        pred_corners[16] = (x8.data + grid_x) / nW
-        pred_corners[17] = (y8.data + grid_y) / nH
+        pred_corners[0]  = (x0.data.view(-1) + grid_x) / nW
+        pred_corners[1]  = (y0.data.view(-1) + grid_y) / nH
+        pred_corners[2]  = (x1.data.view(-1) + grid_x) / nW
+        pred_corners[3]  = (y1.data.view(-1) + grid_y) / nH
+        pred_corners[4]  = (x2.data.view(-1) + grid_x) / nW
+        pred_corners[5]  = (y2.data.view(-1) + grid_y) / nH
+        pred_corners[6]  = (x3.data.view(-1) + grid_x) / nW
+        pred_corners[7]  = (y3.data.view(-1) + grid_y) / nH
+        pred_corners[8]  = (x4.data.view(-1) + grid_x) / nW
+        pred_corners[9]  = (y4.data.view(-1) + grid_y) / nH
+        pred_corners[10]  = (x5.data.view(-1) + grid_x) / nW
+        pred_corners[11]  = (y5.data.view(-1) + grid_y) / nH
+        pred_corners[12] = (x6.data.view(-1) + grid_x) / nW
+        pred_corners[13] = (y6.data.view(-1) + grid_y) / nH
+        pred_corners[14] = (x7.data.view(-1) + grid_x) / nW
+        pred_corners[15] = (y7.data.view(-1) + grid_y) / nH
+        pred_corners[16] = (x8.data.view(-1) + grid_x) / nW
+        pred_corners[17] = (y8.data.view(-1) + grid_y) / nH
         gpu_matrix = pred_corners.transpose(0,1).contiguous().view(-1,18)
         pred_corners = convert2cpu(gpu_matrix)
         t2 = time.time()
@@ -248,7 +248,7 @@ class RegionLoss(nn.Module):
         tx8        = Variable(tx8.cuda())
         ty8        = Variable(ty8.cuda())
         tconf      = Variable(tconf.cuda())
-        tcls       = Variable(tcls.view(-1)[cls_mask].long().cuda())
+        tcls       = Variable(tcls[cls_mask].long().cuda())
         coord_mask = Variable(coord_mask.cuda())
         conf_mask  = Variable(conf_mask.cuda().sqrt())
         cls_mask   = Variable(cls_mask.view(-1, 1).repeat(1,nC).cuda())
