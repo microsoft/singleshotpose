@@ -5,6 +5,20 @@ import os
 from PIL import Image, ImageChops, ImageMath
 import numpy as np
 
+def load_data_detection_backup(imgpath, shape, jitter, hue, saturation, exposure, bgpath):
+    labpath = imgpath.replace('images', 'labels').replace('JPEGImages', 'labels').replace('.jpg', '.txt').replace('.png','.txt')
+    maskpath = imgpath.replace('JPEGImages', 'mask').replace('/00', '/').replace('.jpg', '.png')
+
+    ## data augmentation
+    img = Image.open(imgpath).convert('RGB')
+    mask = Image.open(maskpath).convert('RGB')
+    bg = Image.open(bgpath).convert('RGB')
+    
+    img = change_background(img, mask, bg)
+    img,flip,dx,dy,sx,sy = data_augmentation(img, shape, jitter, hue, saturation, exposure)
+    label = fill_truth_detection(labpath, img.width, img.height, flip, dx, dy, 1./sx, 1./sy)
+    return img,label
+
 def get_add_objs(objname):
     # Decide how many additional objects you will augment and what will be the other types of objects
     if objname == 'ape':
@@ -73,6 +87,7 @@ def distort_image(im, hue, sat, val):
     im = Image.merge(im.mode, tuple(cs))
 
     im = im.convert('RGB')
+    #constrain_image(im)
     return im
 
 def rand_scale(s):
@@ -120,45 +135,98 @@ def data_augmentation(img, shape, jitter, hue, saturation, exposure):
     
     return img, flip, dx,dy,sx,sy 
 
-def fill_truth_detection(labpath, w, h, flip, dx, dy, sx, sy, num_keypoints, max_num_gt):
-    
-    num_labels = 2*num_keypoints+3 # +2 for width, height, +1 for class label
-    label = np.zeros((max_num_gt,num_labels))
+def fill_truth_detection(labpath, w, h, flip, dx, dy, sx, sy):
+    max_boxes = 50
+    label = np.zeros((max_boxes,21))
     if os.path.getsize(labpath):
         
         bs = np.loadtxt(labpath)
         if bs is None:
             return label
-        bs = np.reshape(bs, (-1, num_labels))
+        bs = np.reshape(bs, (-1, 21))
         cc = 0
         for i in range(bs.shape[0]):
-            xs = list()
-            ys = list()
-            for j in range(num_keypoints):
-                xs.append(bs[i][2*j+1])
-                ys.append(bs[i][2*j+2])
+            x0 = bs[i][1]
+            y0 = bs[i][2]
+            x1 = bs[i][3]
+            y1 = bs[i][4]
+            x2 = bs[i][5]
+            y2 = bs[i][6]
+            x3 = bs[i][7]
+            y3 = bs[i][8]
+            x4 = bs[i][9]
+            y4 = bs[i][10]
+            x5 = bs[i][11]
+            y5 = bs[i][12]
+            x6 = bs[i][13]
+            y6 = bs[i][14]
+            x7 = bs[i][15]
+            y7 = bs[i][16]
+            x8 = bs[i][17]
+            y8 = bs[i][18]
 
-            # Make sure the centroid of the object/hand is within image
-            xs[0] = min(0.999, max(0, xs[0] * sx - dx)) 
-            ys[0] = min(0.999, max(0, ys[0] * sy - dy)) 
-            for j in range(1,num_keypoints):
-                xs[j] = xs[j] * sx - dx 
-                ys[j] = ys[j] * sy - dy 
+            x0 = min(0.999, max(0, x0 * sx - dx)) 
+            y0 = min(0.999, max(0, y0 * sy - dy)) 
+            x1 = min(0.999, max(0, x1 * sx - dx)) 
+            y1 = min(0.999, max(0, y1 * sy - dy)) 
+            x2 = min(0.999, max(0, x2 * sx - dx))
+            y2 = min(0.999, max(0, y2 * sy - dy))
+            x3 = min(0.999, max(0, x3 * sx - dx))
+            y3 = min(0.999, max(0, y3 * sy - dy))
+            x4 = min(0.999, max(0, x4 * sx - dx))
+            y4 = min(0.999, max(0, y4 * sy - dy))
+            x5 = min(0.999, max(0, x5 * sx - dx))
+            y5 = min(0.999, max(0, y5 * sy - dy))
+            x6 = min(0.999, max(0, x6 * sx - dx))
+            y6 = min(0.999, max(0, y6 * sy - dy))
+            x7 = min(0.999, max(0, x7 * sx - dx))
+            y7 = min(0.999, max(0, y7 * sy - dy))
+            x8 = min(0.999, max(0, x8 * sx - dx))
+            y8 = min(0.999, max(0, y8 * sy - dy))
             
-            for j in range(num_keypoints):
-                bs[i][2*j+1] = xs[j]
-                bs[i][2*j+2] = ys[j]
+            bs[i][0] = bs[i][0]
+            bs[i][1] = x0
+            bs[i][2] = y0
+            bs[i][3] = x1
+            bs[i][4] = y1
+            bs[i][5] = x2
+            bs[i][6] = y2
+            bs[i][7] = x3
+            bs[i][8] = y3
+            bs[i][9] = x4
+            bs[i][10] = y4
+            bs[i][11] = x5
+            bs[i][12] = y5
+            bs[i][13] = x6
+            bs[i][14] = y6
+            bs[i][15] = x7
+            bs[i][16] = y7
+            bs[i][17] = x8
+            bs[i][18] = y8
 
+            xs = [x1, x2, x3, x4, x5, x6, x7, x8]
+            ys = [y1, y2, y3, y4, y5, y6, y7, y8]
             min_x = min(xs);
             max_x = max(xs);
             min_y = min(ys);
             max_y = max(ys);
-            bs[i][2*num_keypoints+1] = max_x - min_x;
-            bs[i][2*num_keypoints+2] = max_y - min_y;
+            bs[i][19] = max_x - min_x;
+            bs[i][20] = max_y - min_y;
+
+            if flip:
+                bs[i][1] =  0.999 - bs[i][1] 
+                bs[i][3] =  0.999 - bs[i][3]
+                bs[i][5] =  0.999 - bs[i][5]
+                bs[i][7] =  0.999 - bs[i][7]
+                bs[i][9] =  0.999 - bs[i][9]
+                bs[i][11] =  0.999 - bs[i][11]
+                bs[i][13] =  0.999 - bs[i][13]
+                bs[i][15] =  0.999 - bs[i][15]
+                bs[i][17] =  0.999 - bs[i][17]
             
             label[cc] = bs[i]
             cc += 1
-            if cc >= max_num_gt:
+            if cc >= 50:
                 break
 
     label = np.reshape(label, (-1))
@@ -296,10 +364,10 @@ def superimpose_masks(mask, total_mask):
 
     return out
 
-def augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, exposure, num_keypoints, max_num_gt):
+def augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, exposure):
 
     pixelThreshold = 200
-    num_labels = 2*num_keypoints+3
+    
     random.shuffle(add_objs)
     labpath = imgpath.replace('images', 'labels').replace('JPEGImages', 'labels').replace('.jpg', '.txt').replace('.png','.txt')
     maskpath = imgpath.replace('JPEGImages', 'mask').replace('/00', '/').replace('.jpg', '.png')
@@ -309,8 +377,8 @@ def augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, 
     iw, ih = img.size
     mask = Image.open(maskpath).convert('RGB')
     img,mask,flip,dx,dy,sx,sy = shifted_data_augmentation_with_mask(img, mask, shape, jitter, hue, saturation, exposure)
-    label = fill_truth_detection(labpath, iw, ih, flip, dx, dy, 1./sx, 1./sy, num_keypoints, max_num_gt)
-    total_label = np.reshape(label, (-1, num_labels))  
+    label = fill_truth_detection(labpath, iw, ih, flip, dx, dy, 1./sx, 1./sy)
+    total_label = np.reshape(label, (-1, 21))  
 
     # Mask the background
     masked_img = mask_background(img, mask)
@@ -338,7 +406,7 @@ def augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, 
             obj_rand_masked_img = mask_background(obj_rand_img, obj_rand_mask)
 
             obj_rand_masked_img,obj_rand_mask,flip,dx,dy,sx,sy = data_augmentation_with_mask(obj_rand_masked_img, obj_rand_mask, shape, jitter, hue, saturation, exposure)
-            obj_rand_label = fill_truth_detection(obj_rand_lab_path, iw, ih, flip, dx, dy, 1./sx, 1./sy, num_keypoints, max_num_gt)
+            obj_rand_label = fill_truth_detection(obj_rand_lab_path, iw, ih, flip, dx, dy, 1./sx, 1./sy)
             
             # compute intersection (ratio of the object part intersecting with other object parts over the area of the object)
             xx = np.array(obj_rand_mask)
@@ -354,7 +422,7 @@ def augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, 
                 successful = True
                 total_mask = superimpose_masks(obj_rand_mask, total_mask) #  total_mask + obj_rand_mask
                 total_masked_img = superimpose_masked_imgs(obj_rand_masked_img, obj_rand_mask, total_masked_img) # total_masked_img + obj_rand_masked_img
-                obj_rand_label = np.reshape(obj_rand_label, (-1, num_labels))
+                obj_rand_label = np.reshape(obj_rand_label, (-1, 21))
                 total_label[count, :] = obj_rand_label[0, :] 
                 count = count + 1
             else:
@@ -364,7 +432,7 @@ def augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, 
 
     return total_masked_img, np.reshape(total_label, (-1)), total_mask
 
-def load_data_detection(imgpath, shape, jitter, hue, saturation, exposure, bgpath, num_keypoints, max_num_gt):
+def load_data_detection(imgpath, shape, jitter, hue, saturation, exposure, bgpath):
     
     # Read the background image
     bg = Image.open(bgpath).convert('RGB')
@@ -373,11 +441,10 @@ def load_data_detection(imgpath, shape, jitter, hue, saturation, exposure, bgpat
     dirname = os.path.dirname(os.path.dirname(imgpath)) ## dir of dir of file
     objname = os.path.basename(dirname)
     add_objs = get_add_objs(objname)
-    num_labels = 2*num_keypoints+3
     
     # Add additional objects in the scene, apply data augmentation on the objects
-    total_masked_img, label, total_mask = augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, exposure, num_keypoints, max_num_gt)
+    total_masked_img, label, total_mask = augment_objects(imgpath, objname, add_objs, shape, jitter, hue, saturation, exposure)
     img = change_background(total_masked_img, total_mask, bg)
-    lb = np.reshape(label, (-1, num_labels))
+    lb = np.reshape(label, (-1, 21))
     return img,label
 

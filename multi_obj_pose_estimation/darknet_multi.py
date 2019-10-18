@@ -28,10 +28,10 @@ class Reorg(nn.Module):
         assert(W % stride == 0)
         ws = stride
         hs = stride
-        x = x.view(B, C, H/hs, hs, W/ws, ws).transpose(3,4).contiguous()
-        x = x.view(B, C, H/hs*W/ws, hs*ws).transpose(2,3).contiguous()
-        x = x.view(B, C, hs*ws, H/hs, W/ws).transpose(1,2).contiguous()
-        x = x.view(B, hs*ws*C, H/hs, W/ws)
+        x = x.view(B, C, H//hs, hs, W//ws, ws).transpose(3,4).contiguous()
+        x = x.view(B, C, H//hs*W//ws, hs*ws).transpose(2,3).contiguous()
+        x = x.view(B, C, hs*ws, H//hs, W//ws).transpose(1,2).contiguous()
+        x = x.view(B, hs*ws*C, H//hs, W//ws)
         return x
 
 class GlobalAvgPool2d(nn.Module):
@@ -146,7 +146,7 @@ class Darknet(nn.Module):
                 kernel_size = int(block['size'])
                 stride = int(block['stride'])
                 is_pad = int(block['pad'])
-                pad = (kernel_size-1)/2 if is_pad else 0
+                pad = (kernel_size-1)//2 if is_pad else 0
                 activation = block['activation']
                 model = nn.Sequential()
                 if batch_normalize:
@@ -230,7 +230,7 @@ class Darknet(nn.Module):
                 loss.anchors = [float(i) for i in anchors]
                 loss.num_classes = int(block['classes'])
                 loss.num_anchors = int(block['num'])
-                loss.anchor_step = len(loss.anchors)/loss.num_anchors
+                loss.anchor_step = len(loss.anchors)//loss.num_anchors
                 loss.object_scale = float(block['object_scale'])
                 loss.noobject_scale = float(block['noobject_scale'])
                 loss.class_scale = float(block['class_scale'])

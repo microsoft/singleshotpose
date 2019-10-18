@@ -1,0 +1,5 @@
+valid  = ../LINEMOD/duck/test_occlusion.txt
+mesh = ../LINEMOD/duck/duck.ply
+backup = backup_multi
+name = duck
+diam = 0.109

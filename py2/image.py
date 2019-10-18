@@ -73,32 +73,73 @@ def data_augmentation(img, shape, jitter, hue, saturation, exposure):
     
     return img, flip, dx,dy,sx,sy 
 
-def fill_truth_detection(labpath, w, h, flip, dx, dy, sx, sy, num_keypoints, max_num_gt):
-    num_labels = 2 * num_keypoints + 3
-    label = np.zeros((max_num_gt,num_labels))
+def fill_truth_detection(labpath, w, h, flip, dx, dy, sx, sy):
+    max_boxes = 50
+    label = np.zeros((max_boxes,21))
     if os.path.getsize(labpath):
         bs = np.loadtxt(labpath)
         if bs is None:
             return label
-        bs = np.reshape(bs, (-1, num_labels))
+        bs = np.reshape(bs, (-1, 21))
         cc = 0
         for i in range(bs.shape[0]):
-            xs = list()
-            ys = list()
-            for j in range(num_keypoints):
-                xs.append(bs[i][2*j+1])
-                ys.append(bs[i][2*j+2])
+            x0 = bs[i][1]
+            y0 = bs[i][2]
+            x1 = bs[i][3]
+            y1 = bs[i][4]
+            x2 = bs[i][5]
+            y2 = bs[i][6]
+            x3 = bs[i][7]
+            y3 = bs[i][8]
+            x4 = bs[i][9]
+            y4 = bs[i][10]
+            x5 = bs[i][11]
+            y5 = bs[i][12]
+            x6 = bs[i][13]
+            y6 = bs[i][14]
+            x7 = bs[i][15]
+            y7 = bs[i][16]
+            x8 = bs[i][17]
+            y8 = bs[i][18]
 
-            # Make sure the centroid of the object/hand is within image
-            xs[0] = min(0.999, max(0, xs[0] * sx - dx)) 
-            ys[0] = min(0.999, max(0, ys[0] * sy - dy)) 
-            for j in range(1,num_keypoints):
-                xs[j] = xs[j] * sx - dx 
-                ys[j] = ys[j] * sy - dy 
-
-            for j in range(num_keypoints):
-                bs[i][2*j+1] = xs[j]
-                bs[i][2*j+2] = ys[j]
+            x0 = min(0.999, max(0, x0 * sx - dx)) 
+            y0 = min(0.999, max(0, y0 * sy - dy)) 
+            x1 = min(0.999, max(0, x1 * sx - dx)) 
+            y1 = min(0.999, max(0, y1 * sy - dy)) 
+            x2 = min(0.999, max(0, x2 * sx - dx))
+            y2 = min(0.999, max(0, y2 * sy - dy))
+            x3 = min(0.999, max(0, x3 * sx - dx))
+            y3 = min(0.999, max(0, y3 * sy - dy))
+            x4 = min(0.999, max(0, x4 * sx - dx))
+            y4 = min(0.999, max(0, y4 * sy - dy))
+            x5 = min(0.999, max(0, x5 * sx - dx))
+            y5 = min(0.999, max(0, y5 * sy - dy))
+            x6 = min(0.999, max(0, x6 * sx - dx))
+            y6 = min(0.999, max(0, y6 * sy - dy))
+            x7 = min(0.999, max(0, x7 * sx - dx))
+            y7 = min(0.999, max(0, y7 * sy - dy))
+            x8 = min(0.999, max(0, x8 * sx - dx))
+            y8 = min(0.999, max(0, y8 * sy - dy))
+            
+            bs[i][1] = x0
+            bs[i][2] = y0
+            bs[i][3] = x1
+            bs[i][4] = y1
+            bs[i][5] = x2
+            bs[i][6] = y2
+            bs[i][7] = x3
+            bs[i][8] = y3
+            bs[i][9] = x4
+            bs[i][10] = y4
+            bs[i][11] = x5
+            bs[i][12] = y5
+            bs[i][13] = x6
+            bs[i][14] = y6
+            bs[i][15] = x7
+            bs[i][16] = y7
+            bs[i][17] = x8
+            bs[i][18] = y8
+            
             label[cc] = bs[i]
             cc += 1
             if cc >= 50:
@@ -126,7 +167,7 @@ def change_background(img, mask, bg):
 
     return out
 
-def load_data_detection(imgpath, shape, jitter, hue, saturation, exposure, bgpath, num_keypoints, max_num_gt):
+def load_data_detection(imgpath, shape, jitter, hue, saturation, exposure, bgpath):
     labpath = imgpath.replace('images', 'labels').replace('JPEGImages', 'labels').replace('.jpg', '.txt').replace('.png','.txt')
     maskpath = imgpath.replace('JPEGImages', 'mask').replace('/00', '/').replace('.jpg', '.png')
 
@@ -138,6 +179,6 @@ def load_data_detection(imgpath, shape, jitter, hue, saturation, exposure, bgpat
     img = change_background(img, mask, bg)
     img,flip,dx,dy,sx,sy = data_augmentation(img, shape, jitter, hue, saturation, exposure)
     ow, oh = img.size
-    label = fill_truth_detection(labpath, ow, oh, flip, dx, dy, 1./sx, 1./sy, num_keypoints, max_num_gt)
+    label = fill_truth_detection(labpath, ow, oh, flip, dx, dy, 1./sx, 1./sy)
     return img,label
 

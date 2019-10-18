@@ -1,0 +1,7 @@
+train  = LINEMOD/eggbox/train.txt
+valid  = LINEMOD/eggbox/test.txt
+backup = backup/eggbox
+mesh = LINEMOD/eggbox/eggbox.ply
+tr_range = LINEMOD/eggbox/training_range.txt
+name = eggbox
+diam = 0.176364

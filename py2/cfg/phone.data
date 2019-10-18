@@ -1,0 +1,7 @@
+train  = LINEMOD/phone/train.txt
+valid  = LINEMOD/phone/test.txt
+backup = backup/phone
+mesh = LINEMOD/phone/phone.ply
+tr_range = LINEMOD/phone/training_range.txt
+name = phone
+diam = 0.213

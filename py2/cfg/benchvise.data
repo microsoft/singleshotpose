@@ -1,0 +1,7 @@
+train  = LINEMOD/benchvise/train.txt
+valid  = LINEMOD/benchvise/test.txt
+backup = backup/benchvise
+mesh = LINEMOD/benchvise/benchvise.ply
+tr_range = LINEMOD/benchvise/training_range.txt
+name = benchvise
+diam = 0.286908

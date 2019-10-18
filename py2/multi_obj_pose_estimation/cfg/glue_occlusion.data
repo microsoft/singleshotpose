@@ -1,0 +1,5 @@
+valid  = ../LINEMOD/glue/test_occlusion.txt
+mesh = ../LINEMOD/glue/glue.ply
+backup = backup_multi
+name = glue
+diam = 0.176

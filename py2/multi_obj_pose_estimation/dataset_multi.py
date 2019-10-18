@@ -8,12 +8,12 @@ import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
 
-from utils_multi import read_truths_args, read_truths, get_all_files
+from utils import read_truths_args, read_truths, get_all_files
 from image_multi import *
 
 class listDataset(Dataset):
 
-    def __init__(self, root, shape=None, shuffle=True, transform=None, objclass=None, target_transform=None, train=False, seen=0, batch_size=64, num_workers=4, cell_size=32, bg_file_names=None, num_keypoints=9, max_num_gt=50): 
+    def __init__(self, root, shape=None, shuffle=True, transform=None, objclass=None, target_transform=None, train=False, seen=0, batch_size=64, num_workers=4, bg_file_names=None): # bg='/cvlabdata1/home/btekin/ope/data/office_bg'
        with open(root, 'r') as file:
            self.lines = file.readlines()
        if shuffle:
@@ -26,12 +26,9 @@ class listDataset(Dataset):
        self.seen             = seen
        self.batch_size       = batch_size
        self.num_workers      = num_workers
+       # self.bg_file_names    = get_all_files(bg)
        self.bg_file_names    = bg_file_names
        self.objclass         = objclass
-       self.cell_size        = cell_size
-       self.nbatches         = self.nSamples // self.batch_size
-       self.num_keypoints    = num_keypoints
-       self.max_num_gt       = max_num_gt # maximum number of ground-truth labels an image can have
 
     def __len__(self):
         return self.nSamples
@@ -40,25 +37,25 @@ class listDataset(Dataset):
         assert index <= len(self), 'index range error'
         imgpath = self.lines[index].rstrip()
 
-        if self.train and index % self.batch_size == 0:
-            if self.seen < 20*self.nbatches*self.batch_size:
-               width = 13*self.cell_size
+        if self.train and index % 64== 0:
+            if self.seen < 4000*64:
+               width = 13*32
                self.shape = (width, width)
-            elif self.seen < 40*self.nbatches*self.batch_size:
-               width = (random.randint(0,3) + 13)*self.cell_size
+            elif self.seen < 8000*64:
+               width = (random.randint(0,3) + 13)*32
                self.shape = (width, width)
-            elif self.seen < 60*self.nbatches*self.batch_size:
-               width = (random.randint(0,5) + 12)*self.cell_size
+            elif self.seen < 12000*64:
+               width = (random.randint(0,5) + 12)*32
                self.shape = (width, width)
-            elif self.seen < 80*self.nbatches*self.batch_size:
-               width = (random.randint(0,7) + 11)*self.cell_size
+            elif self.seen < 16000*64:
+               width = (random.randint(0,7) + 11)*32
                self.shape = (width, width)
-            else: 
-               width = (random.randint(0,9) + 10)*self.cell_size
+            else: # self.seen < 20000*64:
+               width = (random.randint(0,9) + 10)*32
                self.shape = (width, width)
 
         if self.train:
-            # Decide on how much data augmentation you are going to apply
+            # jitter = 0.2
             jitter = 0.1
             hue = 0.05
             saturation = 1.5 
@@ -68,7 +65,7 @@ class listDataset(Dataset):
             random_bg_index = random.randint(0, len(self.bg_file_names) - 1)
             bgpath = self.bg_file_names[random_bg_index]
 
-            img, label = load_data_detection(imgpath, self.shape, jitter, hue, saturation, exposure, bgpath, self.num_keypoints, self.max_num_gt)
+            img, label = load_data_detection(imgpath, self.shape, jitter, hue, saturation, exposure, bgpath)
             label = torch.from_numpy(label)
         else:
             img = Image.open(imgpath).convert('RGB')
@@ -76,15 +73,14 @@ class listDataset(Dataset):
                 img = img.resize(self.shape)
             
             labpath = imgpath.replace('benchvise', self.objclass).replace('images', 'labels_occlusion').replace('JPEGImages', 'labels_occlusion').replace('.jpg', '.txt').replace('.png','.txt')
-            num_labels = 2*self.num_keypoints+3 # +2 for ground-truth of width/height , +1 for class label
-            label = torch.zeros(self.max_num_gt*num_labels)
+            label = torch.zeros(50*21)
             if os.path.getsize(labpath):
                 ow, oh = img.size
-                tmp = torch.from_numpy(read_truths_args(labpath))
+                tmp = torch.from_numpy(read_truths_args(labpath, 8.0/ow))
                 tmp = tmp.view(-1)
                 tsz = tmp.numel()
-                if tsz > self.max_num_gt*num_labels:
-                    label = tmp[0:self.max_num_gt*num_labels]
+                if tsz > 50*21:
+                    label = tmp[0:50*21]
                 elif tsz > 0:
                     label[0:tsz] = tmp
 

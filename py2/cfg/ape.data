@@ -1,0 +1,7 @@
+train  = LINEMOD/ape/train.txt
+valid  = LINEMOD/ape/test.txt
+backup = backup/ape
+mesh = LINEMOD/ape/ape.ply
+tr_range = LINEMOD/ape/training_range.txt
+name = ape
+diam = 0.103

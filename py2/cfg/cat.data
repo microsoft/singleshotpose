@@ -1,0 +1,7 @@
+train  = LINEMOD/cat/train.txt
+valid  = LINEMOD/cat/test.txt
+backup = backup/cat
+mesh = LINEMOD/cat/cat.ply
+tr_range = LINEMOD/cat/training_range.txt
+name = cat
+diam = 0.155

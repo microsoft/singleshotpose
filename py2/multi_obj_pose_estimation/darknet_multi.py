@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from region_loss import RegionLoss
+from region_loss_multi import RegionLoss
 from cfg import *
 
 class MaxPoolStride1(nn.Module):
@@ -28,10 +28,10 @@ class Reorg(nn.Module):
         assert(W % stride == 0)
         ws = stride
         hs = stride
-        x = x.view(B, C, H//hs, hs, W//ws, ws).transpose(3,4).contiguous()
-        x = x.view(B, C, H//hs*W//ws, hs*ws).transpose(2,3).contiguous()
-        x = x.view(B, C, hs*ws, H//hs, W//ws).transpose(1,2).contiguous()
-        x = x.view(B, hs*ws*C, H//hs, W//ws)
+        x = x.view(B, C, H/hs, hs, W/ws, ws).transpose(3,4).contiguous()
+        x = x.view(B, C, H/hs*W/ws, hs*ws).transpose(2,3).contiguous()
+        x = x.view(B, C, hs*ws, H/hs, W/ws).transpose(1,2).contiguous()
+        x = x.view(B, hs*ws*C, H/hs, W/ws)
         return x
 
 class GlobalAvgPool2d(nn.Module):
@@ -63,11 +63,8 @@ class Darknet(nn.Module):
         self.models = self.create_network(self.blocks) # merge conv, bn,leaky
         self.loss = self.models[len(self.models)-1]
 
-        self.width         = int(self.blocks[0]['width'])
-        self.height        = int(self.blocks[0]['height'])
-        self.test_width    = int(self.blocks[0]['test_width'])
-        self.test_height   = int(self.blocks[0]['test_height'])
-        self.num_keypoints = int(self.blocks[0]['num_keypoints'])
+        self.width = int(self.blocks[0]['width'])
+        self.height = int(self.blocks[0]['height'])
 
         if self.blocks[(len(self.blocks)-1)]['type'] == 'region':
             self.anchors = self.loss.anchors
@@ -149,7 +146,7 @@ class Darknet(nn.Module):
                 kernel_size = int(block['size'])
                 stride = int(block['stride'])
                 is_pad = int(block['pad'])
-                pad = (kernel_size-1)//2 if is_pad else 0
+                pad = (kernel_size-1)/2 if is_pad else 0
                 activation = block['activation']
                 model = nn.Sequential()
                 if batch_normalize:
@@ -230,13 +227,10 @@ class Darknet(nn.Module):
             elif block['type'] == 'region':
                 loss = RegionLoss()
                 anchors = block['anchors'].split(',')
-                if anchors == ['']:
-                    loss.anchors = []
-                else:
-                    loss.anchors = [float(i) for i in anchors]
+                loss.anchors = [float(i) for i in anchors]
                 loss.num_classes = int(block['classes'])
                 loss.num_anchors = int(block['num'])
-                loss.anchor_step = len(loss.anchors)//loss.num_anchors
+                loss.anchor_step = len(loss.anchors)/loss.num_anchors
                 loss.object_scale = float(block['object_scale'])
                 loss.noobject_scale = float(block['noobject_scale'])
                 loss.class_scale = float(block['class_scale'])
