@@ -63,10 +63,10 @@ class listDataset(Dataset):
                width = (random.randint(0,19) + 7)*32
                self.shape = (width, width)
         if self.train:
-            jitter = 0.2
-            hue = 0.1
-            saturation = 1.5 
-            exposure = 1.5
+            jitter = 0.2   #抖动 
+            hue = 0.1      #色相
+            saturation = 1.5    #饱和度 
+            exposure = 1.5      #曝光参数
 
             # Get background image path
             random_bg_index = random.randint(0, len(self.bg_file_names) - 1)
