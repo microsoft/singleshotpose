@@ -95,7 +95,7 @@ e.g.
 python valid.py --datacfg cfg/ape.data --modelcfg cfg/yolo-pose.cfg --weightfile backup/ape/model_backup.weights
 ```
 
-You could also use valid.ipynb to test the model and visualize the results.
+You could also use `valid.ipynb` to test the model and visualize the results or use `valid-colab.ipynb` to run as a tested Google colab notebook.
 
 #### Multi-object pose estimation on the OCCLUSION dataset
 
